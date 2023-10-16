@@ -1,0 +1,82 @@
+import streamlit as st
+from PyPDF2 import PdfWriter, PdfReader
+from langchain.document_loaders import DirectoryLoader
+
+def convert_to_pdf(file):
+    pdf_buffer = BytesIO()
+    pdf = canvas.Canvas(pdf_buffer)
+    pdf.drawString(100, 750, "Converted from Document")  # You can add a title or other content
+    pdf.showPage()
+    pdf.save()
+    pdf_buffer.seek(0)
+
+    pdf_reader = PdfReader(file)
+    pdf_writer = PdfWriter()
+    pdf_writer.addPage(pdf_reader.getPage(0))
+
+    output_pdf = PdfWriter()
+    output_pdf.addPage(pdf_writer.getPage(0))
+    output_pdf.appendPagesFromReader(PdfReader(pdf_buffer))
+    return output_pdf
+
+def main():
+    st.set_page_config(
+        page_title="DOCBOT",
+        page_icon="👾",
+        layout="wide",
+        initial_sidebar_state="expanded",
+    )
+    st.markdown(
+        """
+        <style>
+        .stApp {
+            background: linear-gradient(to bottom, #923CB5, #000000);
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.header("CHAT WITH DOCBOT 👾")
+
+    user_input = st.text_area("ASK YOUR QUERY....")
+    if st.button("SEND"):
+        st.write("User's Query:", user_input)
+
+    with st.sidebar:
+        st.sidebar.title("DOCBOT 👾")
+        document = st.file_uploader("Upload Your Documents")
+        pdf_loader1 = DirectoryLoader('C:\pdffiles', glob="**/*.pdf")
+        pdf_loader2 = DirectoryLoader('C:\pdffiles', glob="**/*.pdf")
+        pdf_loader3 = DirectoryLoader('C:\pdffiles', glob="**/*.pdf")
+
+#take all the loader
+loaders = [pdf_loader1, pdf_loader2, pdf_loader3]
+
+#lets create document
+documents = []
+for loader in loaders:
+    documents.extend(loader.load())
+print(f'You have {len(documents)} document(s) in your data')
+for n in range(0,len(documents)):
+    
+    print(f'There are {len(documents[n].page_content)} characters in your document')
+    if file_extension != "pdf":
+                convert_button = st.sidebar.button("CONVERT TO PDF")
+                if convert_button:
+                    st.sidebar.text("Conversion to PDF in progress...")
+
+                    converted_pdf = convert_to_pdf(document)
+                    st.download_button(
+                        label="Download PDF",
+                        data=converted_pdf.writeToString(),
+                        key="download-pdf",
+                        file_name="converted_document.pdf",
+                    )
+
+    if st.sidebar.button("SUBMIT"):
+        with st.spinner("Submitting..."):
+            st.sidebar.markdown("## Previously Asked Queries")
+
+if __name__ == "__main__":
+    main()
